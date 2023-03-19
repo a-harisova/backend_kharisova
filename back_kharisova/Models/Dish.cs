@@ -9,9 +9,10 @@ namespace back_kharisova.Models
         //[DataType(DataType.Date)]
         public string? Name { get; set; }
         //[DataType(DataType.Date)]
-        public int? Weught { get; set; }
+        public int? Weight { get; set; }
         public int Calories { get; set; }
         public int Amount { get; set; }
         public decimal? Price { get; set; }
+
     }
 }
