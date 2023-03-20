@@ -24,22 +24,22 @@ namespace back_kharisova.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Restaurant>>> GetBook()
         {
-          if (_context.Book == null)
+          if (_context.Restaurant == null)
           {
               return NotFound();
           }
-            return await _context.Book.ToListAsync();
+            return await _context.Restaurant.ToListAsync();
         }
 
         // GET: api/Restaurants/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Restaurant>> GetRestaurant(int id)
         {
-          if (_context.Book == null)
+          if (_context.Restaurant == null)
           {
               return NotFound();
           }
-            var restaurant = await _context.Book.FindAsync(id);
+            var restaurant = await _context.Restaurant.FindAsync(id);
 
             if (restaurant == null)
             {
@@ -85,11 +85,11 @@ namespace back_kharisova.Controllers
         [HttpPost]
         public async Task<ActionResult<Restaurant>> PostRestaurant(Restaurant restaurant)
         {
-          if (_context.Book == null)
+          if (_context.Restaurant == null)
           {
               return Problem("Entity set 'RestContext.Book'  is null.");
           }
-            _context.Book.Add(restaurant);
+            _context.Restaurant.Add(restaurant);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetRestaurant", new { id = restaurant.Id }, restaurant);
@@ -99,17 +99,17 @@ namespace back_kharisova.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteRestaurant(int id)
         {
-            if (_context.Book == null)
+            if (_context.Restaurant == null)
             {
                 return NotFound();
             }
-            var restaurant = await _context.Book.FindAsync(id);
+            var restaurant = await _context.Restaurant.FindAsync(id);
             if (restaurant == null)
             {
                 return NotFound();
             }
 
-            _context.Book.Remove(restaurant);
+            _context.Restaurant.Remove(restaurant);
             await _context.SaveChangesAsync();
 
             return NoContent();
@@ -117,7 +117,7 @@ namespace back_kharisova.Controllers
 
         private bool RestaurantExists(int id)
         {
-            return (_context.Book?.Any(e => e.Id == id)).GetValueOrDefault();
+            return (_context.Restaurant?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }

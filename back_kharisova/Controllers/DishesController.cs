@@ -24,22 +24,22 @@ namespace back_kharisova.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Dish>>> GetAuthor()
         {
-          if (_context.Author == null)
+          if (_context.Dish == null)
           {
               return NotFound();
           }
-            return await _context.Author.ToListAsync();
+            return await _context.Dish.ToListAsync();
         }
 
         // GET: api/Dishes/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Dish>> GetDish(int id)
         {
-          if (_context.Author == null)
+          if (_context.Dish == null)
           {
               return NotFound();
           }
-            var dish = await _context.Author.FindAsync(id);
+            var dish = await _context.Dish.FindAsync(id);
 
             if (dish == null)
             {
@@ -85,11 +85,11 @@ namespace back_kharisova.Controllers
         [HttpPost]
         public async Task<ActionResult<Dish>> PostDish(Dish dish)
         {
-          if (_context.Author == null)
+          if (_context.Dish == null)
           {
               return Problem("Entity set 'RestContext.Author'  is null.");
           }
-            _context.Author.Add(dish);
+            _context.Dish.Add(dish);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetDish", new { id = dish.Id }, dish);
@@ -99,17 +99,17 @@ namespace back_kharisova.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteDish(int id)
         {
-            if (_context.Author == null)
+            if (_context.Dish == null)
             {
                 return NotFound();
             }
-            var dish = await _context.Author.FindAsync(id);
+            var dish = await _context.Dish.FindAsync(id);
             if (dish == null)
             {
                 return NotFound();
             }
 
-            _context.Author.Remove(dish);
+            _context.Dish.Remove(dish);
             await _context.SaveChangesAsync();
 
             return NoContent();
@@ -117,7 +117,7 @@ namespace back_kharisova.Controllers
 
         private bool DishExists(int id)
         {
-            return (_context.Author?.Any(e => e.Id == id)).GetValueOrDefault();
+            return (_context.Dish?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }
