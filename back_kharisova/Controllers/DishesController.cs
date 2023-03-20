@@ -2,14 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using back_kharisova.Models;
 
 namespace back_kharisova.Controllers
 {
-    public class DishesController : Controller
+    [Route("api/[controller]")]
+    [ApiController]
+    public class DishesController : ControllerBase
     {
         private readonly RestContext _context;
 
@@ -18,145 +20,104 @@ namespace back_kharisova.Controllers
             _context = context;
         }
 
-        // GET: Dishes
-        public async Task<IActionResult> Index()
+        // GET: api/Dishes
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<Dish>>> GetAuthor()
         {
-              return _context.Author != null ? 
-                          View(await _context.Author.ToListAsync()) :
-                          Problem("Entity set 'RestContext.Author'  is null.");
+          if (_context.Author == null)
+          {
+              return NotFound();
+          }
+            return await _context.Author.ToListAsync();
         }
 
-        // GET: Dishes/Details/5
-        public async Task<IActionResult> Details(int? id)
+        // GET: api/Dishes/5
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Dish>> GetDish(int id)
         {
-            if (id == null || _context.Author == null)
-            {
-                return NotFound();
-            }
-
-            var dish = await _context.Author
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (dish == null)
-            {
-                return NotFound();
-            }
-
-            return View(dish);
-        }
-
-        // GET: Dishes/Create
-        public IActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: Dishes/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Type,Name,Weight,Calories,Amount,Price")] Dish dish)
-        {
-            if (ModelState.IsValid)
-            {
-                _context.Add(dish);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(dish);
-        }
-
-        // GET: Dishes/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null || _context.Author == null)
-            {
-                return NotFound();
-            }
-
+          if (_context.Author == null)
+          {
+              return NotFound();
+          }
             var dish = await _context.Author.FindAsync(id);
+
             if (dish == null)
             {
                 return NotFound();
             }
-            return View(dish);
+
+            return dish;
         }
 
-        // POST: Dishes/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Type,Name,Weight,Calories,Amount,Price")] Dish dish)
+        // PUT: api/Dishes/5
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutDish(int id, Dish dish)
         {
             if (id != dish.Id)
             {
-                return NotFound();
+                return BadRequest();
             }
 
-            if (ModelState.IsValid)
+            _context.Entry(dish).State = EntityState.Modified;
+
+            try
             {
-                try
-                {
-                    _context.Update(dish);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!DishExists(dish.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+                await _context.SaveChangesAsync();
             }
-            return View(dish);
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!DishExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
         }
 
-        // GET: Dishes/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        // POST: api/Dishes
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPost]
+        public async Task<ActionResult<Dish>> PostDish(Dish dish)
         {
-            if (id == null || _context.Author == null)
+          if (_context.Author == null)
+          {
+              return Problem("Entity set 'RestContext.Author'  is null.");
+          }
+            _context.Author.Add(dish);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction("GetDish", new { id = dish.Id }, dish);
+        }
+
+        // DELETE: api/Dishes/5
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteDish(int id)
+        {
+            if (_context.Author == null)
             {
                 return NotFound();
             }
-
-            var dish = await _context.Author
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var dish = await _context.Author.FindAsync(id);
             if (dish == null)
             {
                 return NotFound();
             }
 
-            return View(dish);
-        }
-
-        // POST: Dishes/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            if (_context.Author == null)
-            {
-                return Problem("Entity set 'RestContext.Author'  is null.");
-            }
-            var dish = await _context.Author.FindAsync(id);
-            if (dish != null)
-            {
-                _context.Author.Remove(dish);
-            }
-            
+            _context.Author.Remove(dish);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+
+            return NoContent();
         }
 
         private bool DishExists(int id)
         {
-          return (_context.Author?.Any(e => e.Id == id)).GetValueOrDefault();
+            return (_context.Author?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }

@@ -2,14 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using back_kharisova.Models;
 
 namespace back_kharisova.Controllers
 {
-    public class RestaurantsController : Controller
+    [Route("api/[controller]")]
+    [ApiController]
+    public class RestaurantsController : ControllerBase
     {
         private readonly RestContext _context;
 
@@ -18,145 +20,104 @@ namespace back_kharisova.Controllers
             _context = context;
         }
 
-        // GET: Restaurants
-        public async Task<IActionResult> Index()
+        // GET: api/Restaurants
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<Restaurant>>> GetBook()
         {
-              return _context.Book != null ? 
-                          View(await _context.Book.ToListAsync()) :
-                          Problem("Entity set 'RestContext.Book'  is null.");
+          if (_context.Book == null)
+          {
+              return NotFound();
+          }
+            return await _context.Book.ToListAsync();
         }
 
-        // GET: Restaurants/Details/5
-        public async Task<IActionResult> Details(int? id)
+        // GET: api/Restaurants/5
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Restaurant>> GetRestaurant(int id)
         {
-            if (id == null || _context.Book == null)
-            {
-                return NotFound();
-            }
-
-            var restaurant = await _context.Book
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (restaurant == null)
-            {
-                return NotFound();
-            }
-
-            return View(restaurant);
-        }
-
-        // GET: Restaurants/Create
-        public IActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: Restaurants/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Adress,Rating")] Restaurant restaurant)
-        {
-            if (ModelState.IsValid)
-            {
-                _context.Add(restaurant);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(restaurant);
-        }
-
-        // GET: Restaurants/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null || _context.Book == null)
-            {
-                return NotFound();
-            }
-
+          if (_context.Book == null)
+          {
+              return NotFound();
+          }
             var restaurant = await _context.Book.FindAsync(id);
+
             if (restaurant == null)
             {
                 return NotFound();
             }
-            return View(restaurant);
+
+            return restaurant;
         }
 
-        // POST: Restaurants/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Adress,Rating")] Restaurant restaurant)
+        // PUT: api/Restaurants/5
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutRestaurant(int id, Restaurant restaurant)
         {
             if (id != restaurant.Id)
             {
-                return NotFound();
+                return BadRequest();
             }
 
-            if (ModelState.IsValid)
+            _context.Entry(restaurant).State = EntityState.Modified;
+
+            try
             {
-                try
-                {
-                    _context.Update(restaurant);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!RestaurantExists(restaurant.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+                await _context.SaveChangesAsync();
             }
-            return View(restaurant);
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!RestaurantExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
         }
 
-        // GET: Restaurants/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        // POST: api/Restaurants
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPost]
+        public async Task<ActionResult<Restaurant>> PostRestaurant(Restaurant restaurant)
         {
-            if (id == null || _context.Book == null)
+          if (_context.Book == null)
+          {
+              return Problem("Entity set 'RestContext.Book'  is null.");
+          }
+            _context.Book.Add(restaurant);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction("GetRestaurant", new { id = restaurant.Id }, restaurant);
+        }
+
+        // DELETE: api/Restaurants/5
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteRestaurant(int id)
+        {
+            if (_context.Book == null)
             {
                 return NotFound();
             }
-
-            var restaurant = await _context.Book
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var restaurant = await _context.Book.FindAsync(id);
             if (restaurant == null)
             {
                 return NotFound();
             }
 
-            return View(restaurant);
-        }
-
-        // POST: Restaurants/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            if (_context.Book == null)
-            {
-                return Problem("Entity set 'RestContext.Book'  is null.");
-            }
-            var restaurant = await _context.Book.FindAsync(id);
-            if (restaurant != null)
-            {
-                _context.Book.Remove(restaurant);
-            }
-            
+            _context.Book.Remove(restaurant);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+
+            return NoContent();
         }
 
         private bool RestaurantExists(int id)
         {
-          return (_context.Book?.Any(e => e.Id == id)).GetValueOrDefault();
+            return (_context.Book?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }
