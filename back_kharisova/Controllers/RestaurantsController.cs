@@ -13,9 +13,9 @@ namespace back_kharisova.Controllers
     [ApiController]
     public class RestaurantsController : ControllerBase
     {
-        private readonly RestContext _context;
+        private readonly Models.RestContext _context;
 
-        public RestaurantsController(RestContext context)
+        public RestaurantsController(Models.RestContext context)
         {
             _context = context;
         }

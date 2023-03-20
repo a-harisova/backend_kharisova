@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using back_kharisova.Models;
 
 namespace back_kharisova
 {
@@ -7,8 +8,11 @@ namespace back_kharisova
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-            builder.Services.AddDbContext<DbContext>(options =>
-            options.UseSqlServer(builder.Configuration.GetConnectionString("DbContext")));
+            //builder.Services.AddDbContext<RestContext>(options =>
+            //options.UseSqlServer(builder.Configuration.GetConnectionString("RestContext")));
+
+            builder.Services.AddDbContext<RestContext>(options =>
+                options.UseSqlServer(builder.Configuration.GetConnectionString("RestContext")));
 
             // Add services to the container.
 

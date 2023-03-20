@@ -13,9 +13,9 @@ namespace back_kharisova.Controllers
     [ApiController]
     public class DishesController : ControllerBase
     {
-        private readonly RestContext _context;
+        private readonly Models.RestContext _context;
 
-        public DishesController(RestContext context)
+        public DishesController(Models.RestContext context)
         {
             _context = context;
         }

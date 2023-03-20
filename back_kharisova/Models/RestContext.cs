@@ -4,7 +4,7 @@ namespace back_kharisova.Models
 {
     public class RestContext: DbContext
     {
-        public RestContext(DbContextOptions<DbContext> options): base(options)
+        public RestContext(DbContextOptions<RestContext> options) : base(options)
     {
         Database.EnsureCreated();
     }
