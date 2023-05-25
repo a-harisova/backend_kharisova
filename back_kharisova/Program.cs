@@ -1,5 +1,13 @@
 using Microsoft.EntityFrameworkCore;
 using back_kharisova.Models;
+using MySql.EntityFrameworkCore.Extensions;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Collections.Generic;
+using System;
 
 namespace back_kharisova
 {
@@ -8,11 +16,13 @@ namespace back_kharisova
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+            builder.Services.AddDbContext<RestContext>(options =>
+                options.UseMySQL(builder.Configuration.GetConnectionString("DefaultConnection")));
             //builder.Services.AddDbContext<RestContext>(options =>
             //options.UseSqlServer(builder.Configuration.GetConnectionString("RestContext")));
 
-            builder.Services.AddDbContext<RestContext>(options =>
-                options.UseSqlServer(builder.Configuration.GetConnectionString("RestContext")));
+            //builder.Services.AddDbContext<RestContext>(options =>
+            //    options.UseSqlServer(builder.Configuration.GetConnectionString("RestContext")));
 
             // Add services to the container.
 

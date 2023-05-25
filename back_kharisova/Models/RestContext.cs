@@ -8,7 +8,7 @@ namespace back_kharisova.Models
     {
         Database.EnsureCreated();
     }
-    public DbSet<back_kharisova.Models.Dish> Dish { get; set; }
-    public DbSet<back_kharisova.Models.Restaurant> Restaurant { get; set; }
+    public DbSet<back_kharisova.Models.Dish> Dishes { get; set; }
+    public DbSet<back_kharisova.Models.Order> Orders { get; set; }
     }
 }
