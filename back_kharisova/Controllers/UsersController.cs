@@ -12,56 +12,56 @@ namespace back_kharisova.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class DishesController : ControllerBase
+    public class UsersController : ControllerBase
     {
         private readonly RestContext _context;
 
-        public DishesController(RestContext context)
+        public UsersController(RestContext context)
         {
             _context = context;
         }
 
-        // GET: api/Dishes
+        // GET: api/Users
         [HttpGet]
         [Authorize(Roles = "admin")]
-        public async Task<ActionResult<IEnumerable<Dish>>> GetDishes()
+        public async Task<ActionResult<IEnumerable<User>>> GetUser()
         {
-          if (_context.Dishes == null)
+          if (_context.User == null)
           {
               return NotFound();
           }
-            return await _context.Dishes.ToListAsync();
+            return await _context.User.ToListAsync();
         }
 
-        // GET: api/Dishes/5
+        // GET: api/Users/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Dish>> GetDish(int id)
+        public async Task<ActionResult<User>> GetUser(int id)
         {
-          if (_context.Dishes == null)
+          if (_context.User == null)
           {
               return NotFound();
           }
-            var dish = await _context.Dishes.FindAsync(id);
+            var user = await _context.User.FindAsync(id);
 
-            if (dish == null)
+            if (user == null)
             {
                 return NotFound();
             }
 
-            return dish;
+            return user;
         }
 
-        // PUT: api/Dishes/5
+        // PUT: api/Users/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutDish(int id, Dish dish)
+        public async Task<IActionResult> PutUser(int id, User user)
         {
-            if (id != dish.Id)
+            if (id != user.Id)
             {
                 return BadRequest();
             }
 
-            _context.Entry(dish).State = EntityState.Modified;
+            _context.Entry(user).State = EntityState.Modified;
 
             try
             {
@@ -69,7 +69,7 @@ namespace back_kharisova.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!DishExists(id))
+                if (!UserExists(id))
                 {
                     return NotFound();
                 }
@@ -82,44 +82,44 @@ namespace back_kharisova.Controllers
             return NoContent();
         }
 
-        // POST: api/Dishes
+        // POST: api/Users
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Dish>> PostDish(Dish dish)
+        public async Task<ActionResult<User>> PostUser(User user)
         {
-          if (_context.Dishes == null)
+          if (_context.User == null)
           {
-              return Problem("Entity set 'RestContext.Dishes'  is null.");
+              return Problem("Entity set 'RestContext.User'  is null.");
           }
-            _context.Dishes.Add(dish);
+            _context.User.Add(user);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetDish", new { id = dish.Id }, dish);
+            return CreatedAtAction("GetUser", new { id = user.Id }, user);
         }
 
-        // DELETE: api/Dishes/5
+        // DELETE: api/Users/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteDish(int id)
+        public async Task<IActionResult> DeleteUser(int id)
         {
-            if (_context.Dishes == null)
+            if (_context.User == null)
             {
                 return NotFound();
             }
-            var dish = await _context.Dishes.FindAsync(id);
-            if (dish == null)
+            var user = await _context.User.FindAsync(id);
+            if (user == null)
             {
                 return NotFound();
             }
 
-            _context.Dishes.Remove(dish);
+            _context.User.Remove(user);
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
 
-        private bool DishExists(int id)
+        private bool UserExists(int id)
         {
-            return (_context.Dishes?.Any(e => e.Id == id)).GetValueOrDefault();
+            return (_context.User?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }

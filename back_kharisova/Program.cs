@@ -18,13 +18,25 @@ namespace back_kharisova
             var builder = WebApplication.CreateBuilder(args);
             builder.Services.AddDbContext<RestContext>(options =>
                 options.UseMySQL(builder.Configuration.GetConnectionString("DefaultConnection")));
-            //builder.Services.AddDbContext<RestContext>(options =>
-            //options.UseSqlServer(builder.Configuration.GetConnectionString("RestContext")));
-
-            //builder.Services.AddDbContext<RestContext>(options =>
-            //    options.UseSqlServer(builder.Configuration.GetConnectionString("RestContext")));
 
             // Add services to the container.
+            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters()
+                {
+                    ValidateIssuer = true,
+                    ValidIssuer = Auth_options.Issuer,
+
+                    ValidateAudience = true,
+                    ValidAudience = Auth_options.Audience,
+
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = Auth_options.SigningKey,
+
+                    ValidateLifetime = true,
+                };
+            }
+             );
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -42,6 +54,10 @@ namespace back_kharisova
 
             app.UseHttpsRedirection();
 
+            app.UseDefaultFiles();
+            app.UseStaticFiles();
+
+            app.UseAuthentication();
             app.UseAuthorization();
 
 

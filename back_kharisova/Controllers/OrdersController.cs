@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using back_kharisova.Models;
+using Microsoft.AspNetCore.Authorization;
+using System.Data;
 
 namespace back_kharisova.Controllers
 {
@@ -22,6 +24,7 @@ namespace back_kharisova.Controllers
 
         // GET: api/Orders
         [HttpGet]
+        [Authorize(Roles = "guest")]
         public async Task<ActionResult<IEnumerable<Order>>> GetOrders()
         {
           if (_context.Orders == null)

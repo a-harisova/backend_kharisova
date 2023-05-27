@@ -8,7 +8,5 @@
         public string?  Status { get; set; }
         public List <Dish>? Dishes { get; set; }
 
-
-
     }
 }
