@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using back_kharisova.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace back_kharisova.Controllers
 {
@@ -22,6 +23,7 @@ namespace back_kharisova.Controllers
 
         // GET: api/Users
         [HttpGet]
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult<IEnumerable<User>>> GetUser()
         {
           if (_context.User == null)
@@ -33,6 +35,7 @@ namespace back_kharisova.Controllers
 
         // GET: api/Users/5
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<ActionResult<User>> GetUser(int id)
         {
           if (_context.User == null)
@@ -50,6 +53,7 @@ namespace back_kharisova.Controllers
         }
 
         [HttpGet("{userId}/order-history")]
+        [Authorize]
         public IActionResult GetUserOrderHistory(int userId)
         {
 
@@ -89,6 +93,7 @@ namespace back_kharisova.Controllers
         // PUT: api/Users/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
+        [Authorize]
         public async Task<IActionResult> PutUser(int id, User user)
         {
             if (id != user.Id)
@@ -134,6 +139,7 @@ namespace back_kharisova.Controllers
 
         // DELETE: api/Users/5
         [HttpDelete("{id}")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> DeleteUser(int id)
         {
             if (_context.User == null)

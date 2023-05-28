@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using back_kharisova.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace back_kharisova.Controllers
 {
@@ -22,6 +23,7 @@ namespace back_kharisova.Controllers
 
         // GET: api/Orders
         [HttpGet]
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult<IEnumerable<Order>>> GetOrders()
         {
           if (_context.Orders == null)
@@ -33,6 +35,7 @@ namespace back_kharisova.Controllers
 
         // GET: api/Orders/5
         [HttpGet("{id}")]
+        //[Authorize]
         public async Task<ActionResult<Order>> GetOrder(int id)
         {
           if (_context.Orders == null)
@@ -50,6 +53,7 @@ namespace back_kharisova.Controllers
         }
 
         [HttpGet("SortedOrdersByStatus")]
+        [Authorize(Roles = "admin")]
         public List<Order> SortedOrdersByStatus()
         {
             List<Order> sortedOrders = _context.Orders
@@ -61,6 +65,7 @@ namespace back_kharisova.Controllers
         }
 
         [HttpGet("StatusOfUserOrder")]
+        [Authorize]
         public IActionResult StatusOfUserOrder(int userId)
         {
 
@@ -76,6 +81,7 @@ namespace back_kharisova.Controllers
         // PUT: api/Orders/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> PutOrder(int id, Order order)
         {
             if (id != order.Id)
@@ -107,6 +113,7 @@ namespace back_kharisova.Controllers
         // POST: api/Orders
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        //[Authorize]
         public async Task<ActionResult<Order>> PostOrder(Order order)
         {
           if (_context.Orders == null)
@@ -121,6 +128,7 @@ namespace back_kharisova.Controllers
 
         // DELETE: api/Orders/5
         [HttpDelete("{id}")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> DeleteOrder(int id)
         {
             if (_context.Orders == null)

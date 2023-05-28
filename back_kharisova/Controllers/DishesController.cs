@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using back_kharisova.Models;
+using Microsoft.AspNetCore.Authorization;
 using static back_kharisova.Models.Dish;
 
 namespace back_kharisova.Controllers
@@ -25,10 +26,10 @@ namespace back_kharisova.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Dish>>> GetDishes()
         {
-          if (_context.Dishes == null)
-          {
-              return NotFound();
-          }
+            if (_context.Dishes == null)
+            {
+                return NotFound();
+            }
             return await _context.Dishes.ToListAsync();
         }
 
@@ -36,10 +37,10 @@ namespace back_kharisova.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Dish>> GetDish(int id)
         {
-          if (_context.Dishes == null)
-          {
-              return NotFound();
-          }
+            if (_context.Dishes == null)
+            {
+                return NotFound();
+            }
             var dish = await _context.Dishes.FindAsync(id);
 
             if (dish == null)
@@ -179,6 +180,7 @@ namespace back_kharisova.Controllers
         // PUT: api/Dishes/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
+        [Authorize (Roles = "admin")]
         public async Task<IActionResult> PutDish(int id, Dish dish)
         {
             if (id != dish.Id)
@@ -210,6 +212,7 @@ namespace back_kharisova.Controllers
         // POST: api/Dishes
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult<Dish>> PostDish(Dish dish)
         {
           if (_context.Dishes == null)
@@ -224,6 +227,7 @@ namespace back_kharisova.Controllers
 
         // DELETE: api/Dishes/5
         [HttpDelete("{id}")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> DeleteDish(int id)
         {
             if (_context.Dishes == null)
