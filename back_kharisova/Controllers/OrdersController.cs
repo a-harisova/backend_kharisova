@@ -6,8 +6,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using back_kharisova.Models;
-using Microsoft.AspNetCore.Authorization;
-using System.Data;
 
 namespace back_kharisova.Controllers
 {
@@ -24,7 +22,6 @@ namespace back_kharisova.Controllers
 
         // GET: api/Orders
         [HttpGet]
-        [Authorize(Roles = "guest")]
         public async Task<ActionResult<IEnumerable<Order>>> GetOrders()
         {
           if (_context.Orders == null)
@@ -50,6 +47,30 @@ namespace back_kharisova.Controllers
             }
 
             return order;
+        }
+
+        [HttpGet("SortedOrdersByStatus")]
+        public List<Order> SortedOrdersByStatus()
+        {
+            List<Order> sortedOrders = _context.Orders
+                .OrderBy(o => o.Status)
+                .ToList();
+
+            return sortedOrders;
+
+        }
+
+        [HttpGet("StatusOfUserOrder")]
+        public IActionResult StatusOfUserOrder(int userId)
+        {
+
+            var sortedOrders = _context.Orders
+                .Where(o => o.UserId == userId)
+                .OrderBy(o => o.Status)
+                .Select(o => o.Status)
+                .ToList();
+
+            return Ok(sortedOrders);
         }
 
         // PUT: api/Orders/5

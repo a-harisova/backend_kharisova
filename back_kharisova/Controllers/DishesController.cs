@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using back_kharisova.Models;
-using Microsoft.AspNetCore.Authorization;
+using static back_kharisova.Models.Dish;
 
 namespace back_kharisova.Controllers
 {
@@ -23,7 +23,6 @@ namespace back_kharisova.Controllers
 
         // GET: api/Dishes
         [HttpGet]
-        [Authorize(Roles = "admin")]
         public async Task<ActionResult<IEnumerable<Dish>>> GetDishes()
         {
           if (_context.Dishes == null)
@@ -49,6 +48,132 @@ namespace back_kharisova.Controllers
             }
 
             return dish;
+        }
+
+        [HttpGet("DishesWithCategoryName")]
+        public IActionResult DishesWithCategoryName()
+        {
+            var dishTypeNames = Enum.GetNames(typeof(Dish.DishType)).ToList();
+
+            var dishesWithEnumType = _context.Dishes
+                .Select(dish => new
+                {
+                    Id = dish.Id,
+                    Type = dishTypeNames[(int)dish.Type],
+                    Name = dish.Name,
+                    Weight = dish.Weight,
+                    Calories = dish.Calories,
+                    Price = dish.Price,
+                    Description = dish.Description
+                })
+                .ToList();
+
+            return Ok(dishesWithEnumType);
+        }
+
+        [HttpGet("Top5ExpensiveDishes")]
+        public IActionResult Top5ExpensiveDishes()
+        {
+            var top5ExpensiveDishes = _context.Dishes
+                .OrderByDescending(d => d.Price)
+                    .Take(5)
+                    .Select(d => new
+                    {
+                        Type = d.Type.ToString(),
+                        Name = d.Name,
+                        Weight = d.Weight,
+                        Calories = d.Calories,
+                        Price = d.Price,
+                        Description = d.Description
+                    })
+                    .ToList();
+
+            return Ok(top5ExpensiveDishes);
+        }
+
+        [HttpGet("Top5CheapestDishes")]
+        public IActionResult Top5CheapestDishes()
+        {
+            var top5CheapestDishes = _context.Dishes
+                .OrderBy(d => d.Price)
+                .Take(5)
+                .Select(d => new
+                {
+                    Type = d.Type.ToString(),
+                    Name = d.Name,
+                    Weight = d.Weight,
+                    Calories = d.Calories,
+                    Price = d.Price,
+                    Description = d.Description
+                })
+                .ToList();
+
+            return Ok(top5CheapestDishes);
+        }
+
+        [HttpGet("DishesByItsTypeNumber")]
+        public IActionResult DishesByItsTypeNumber(DishType dishType)
+        {
+            var dishesByType = _context.Dishes
+                .Where(d => d.Type == dishType)
+                .Select(d => new
+                {
+                    Type = d.Type.ToString(),
+                    Name = d.Name,
+                    Weight = d.Weight,
+                    Calories = d.Calories,
+                    Price = d.Price,
+                    Description = d.Description
+                })
+                .ToList();
+
+            return Ok(dishesByType);
+        }
+
+        [HttpGet("DishesByItsTypeName")]
+        public IActionResult DishesByItsTypeName(string dishType)
+        {
+            if (!Enum.TryParse<DishType>(dishType, out var parsedDishType))
+            {
+                return BadRequest("Invalid dish type.");
+            }
+
+            var dishTypeName = Enum.GetName(typeof(DishType), parsedDishType);
+
+            var dishesByType = _context.Dishes
+                .Where(d => d.Type == parsedDishType)
+                .Select(d => new
+                {
+                    Type = dishTypeName,
+                    Name = d.Name,
+                    Weight = d.Weight,
+                    Calories = d.Calories,
+                    Price = d.Price,
+                    Description = d.Description
+                })
+                .ToList();
+
+            return Ok(dishesByType);
+        }
+
+        [HttpGet("Top5LowCalorieDishes")]
+        public IActionResult Top5LowCalorieDishes()
+        {
+            var top5LowCalorieDishes = _context.Dishes
+                .OrderBy(d => d.Calories)
+                .Take(5)
+                .Select(d => new
+                {
+                    Type = d.Type.ToString(),
+                    Name = d.Name,
+                    Weight = d.Weight,
+                    Calories = d.Calories,
+                    Price = d.Price,
+                    Description = d.Description
+                })
+                .ToList();
+
+            return Ok(top5LowCalorieDishes);
         }
 
         // PUT: api/Dishes/5

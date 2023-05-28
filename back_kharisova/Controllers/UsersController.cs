@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using back_kharisova.Models;
-using Microsoft.AspNetCore.Authorization;
 
 namespace back_kharisova.Controllers
 {
@@ -23,7 +22,6 @@ namespace back_kharisova.Controllers
 
         // GET: api/Users
         [HttpGet]
-        [Authorize(Roles = "admin")]
         public async Task<ActionResult<IEnumerable<User>>> GetUser()
         {
           if (_context.User == null)
@@ -49,6 +47,43 @@ namespace back_kharisova.Controllers
             }
 
             return user;
+        }
+
+        [HttpGet("{userId}/order-history")]
+        public IActionResult GetUserOrderHistory(int userId)
+        {
+
+            var orderHistory = _context.Orders
+            .Where(o => o.UserId == userId)
+            .Select(o => new
+            {
+                o.Id,
+                o.Date,
+                o.Status,
+                Dishes = o.Dishes.Select(d => new
+                {
+                    d.Id,
+                    d.Name,
+                    d.Type,
+                    d.Weight,
+                    d.Calories,
+                    d.Price,
+                    d.Description
+                }).ToList(),
+                UserId = o.UserId,
+                User = new
+                {
+                    o.User.Id,
+                    o.User.Name,
+                    o.User.Login,
+                    o.User.Email,
+                    o.User.PhoneNumber,
+                    o.User.Adress
+                }
+            })
+            .ToList();
+
+            return Ok(orderHistory);
         }
 
         // PUT: api/Users/5

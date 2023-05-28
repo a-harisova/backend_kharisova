@@ -6,13 +6,16 @@ namespace back_kharisova.Models
 {
     public class User
     {
-        public int Id { get; set; } 
+        public int Id { get; set; }
         public string Name { get; set; }
         public string Login { get; set; }
         public string Email { get; set; }
         private byte[] Password { get; set; }
         public string PhoneNumber { get; set; }
         public string Adress { get; set; }
+
+        // Добавляем навигационное свойство для связи с заказами
+        public virtual List<Order> Orders { get; set; }
 
         public string PasswordHash
         {

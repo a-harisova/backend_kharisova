@@ -25,8 +25,8 @@ namespace back_kharisova.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<int>("Calories")
-                        .HasColumnType("int");
+                    b.Property<double>("Calories")
+                        .HasColumnType("double");
 
                     b.Property<string>("Description")
                         .HasColumnType("longtext");
@@ -40,10 +40,10 @@ namespace back_kharisova.Migrations
                     b.Property<decimal?>("Price")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<string>("Type")
-                        .HasColumnType("longtext");
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
 
-                    b.Property<int?>("Weight")
+                    b.Property<int>("Weight")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -59,16 +59,18 @@ namespace back_kharisova.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("Date")
+                    b.Property<DateTime>("Date")
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("Status")
                         .HasColumnType("longtext");
 
-                    b.Property<double?>("Sum")
-                        .HasColumnType("double");
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Orders");
                 });
@@ -117,7 +119,23 @@ namespace back_kharisova.Migrations
 
             modelBuilder.Entity("back_kharisova.Models.Order", b =>
                 {
+                    b.HasOne("back_kharisova.Models.User", "User")
+                        .WithMany("Orders")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("back_kharisova.Models.Order", b =>
+                {
                     b.Navigation("Dishes");
+                });
+
+            modelBuilder.Entity("back_kharisova.Models.User", b =>
+                {
+                    b.Navigation("Orders");
                 });
 #pragma warning restore 612, 618
         }
